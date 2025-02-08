@@ -1,0 +1,55 @@
+# Операционная система
+.DS_Store
+Thumbs.db
+
+
+# Виртуальное окружение
+venv/
+env/
+.venv
+# Кэш Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Логи и временные файлы
+*.log
+*.pot
+*.py~ 
+*.pid
+*.swp
+*.swo
+*.sqlite3
+*.db
+complexity.txt
+
+# IDE/редакторы
+.idea/
+.vscode/
+*.iml
+
+# Docker
+*.env
+*.env.*
+
+# Тесты и покрытия
+.tox/
+.nox/
+coverage.*
+*.cover
+*.py,cover
+htmlcov/
+
+# Инструменты
+.mypy_cache/
+.pytest_cache/
+.pyre/
+.ipynb_checkpoints
+
+# Git
+*.orig
+*.rej
+.env
+docker-compose.override.yml
+*.log
+__pycache__/
