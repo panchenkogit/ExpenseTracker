@@ -1,9 +1,13 @@
 from fastapi import FastAPI
 
+from router import router as user_router
+
 import uvicorn
 
 app = FastAPI(title="UserService",
               version="1.0")
+
+app.include_router(user_router)
 
 @app.get("/")
 async def hello() -> dict:
