@@ -31,7 +31,7 @@ complexity.txt
 # Docker
 *.env
 *.env.*
-
+tests/
 # Тесты и покрытия
 .tox/
 .nox/
