@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.pool import NullPool
 from alembic import context
 from config import ASYNC_DB_URL
-from database.entities import User
+from database.entities import User, Frequency, Sub
 from database.connect import Base
 
 
