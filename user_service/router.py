@@ -6,9 +6,9 @@ from database.entities import User as UserDB
 from sqlalchemy import exists, select
 
 from user_service.models import User, RegUser, LoginUser
-from user_service.utils.auth import hash_password, check_password
-from user_service.utils.cookies import set_tokens_in_cookie
-from user_service.utils.jwt import create_tokens, get_payload
+from common_utils.utils.auth import hash_password, check_password
+from common_utils.utils.cookies import set_tokens_in_cookie
+from common_utils.utils.jwt import add_payload, create_tokens, get_payload
 
 
 router = APIRouter(prefix="/user",
@@ -28,16 +28,14 @@ async def register(user: RegUser,
 
     password_hash = hash_password(user.password)
 
-    new_user = UserDB(
-        firstname=user.firstname,
-        lastname=user.lastname,
-        email=user.email,
-        birth=user.birth,
-        password_hash=password_hash
-    )
+    user_data = user.model_dump()
+    user_data["password_hash"] = password_hash
+    user_data.pop("password")
+    new_user = UserDB(**user_data)
+
     session.add(new_user)
 
-    payload = get_payload(new_user)
+    payload = add_payload(new_user)
     tokens  = create_tokens(payload)
     set_tokens_in_cookie(response, tokens)
     
@@ -58,7 +56,7 @@ async def login(user: LoginUser,
         raise HTTPException(status_code=401,
                             detail="Неправильный логин или пароль")
     
-    payload = get_payload(result)
+    payload = add_payload(result)
 
     tokens  = create_tokens(payload)
     set_tokens_in_cookie(response, tokens)

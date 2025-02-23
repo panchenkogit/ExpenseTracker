@@ -1,5 +1,6 @@
 from sqlalchemy import DATE, Column, Integer, String, TIMESTAMP, UUID, func
 import uuid
+from sqlalchemy.orm import relationship
 from database.connect import Base
 
 class User(Base):
@@ -13,6 +14,8 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
     birth = Column(DATE, nullable=True)
+
+    subscriptions = relationship("Sub", back_populates="user")
 
     created = Column(TIMESTAMP, nullable=False, server_default=func.now())
     updated = Column(TIMESTAMP, nullable=False, server_default=func.now(), onupdate=func.now())

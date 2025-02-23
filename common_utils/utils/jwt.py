@@ -1,16 +1,27 @@
 from datetime import datetime, timedelta, timezone
-from fastapi import Response
+from fastapi import HTTPException, Response
 import jwt
 
 from config import SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, REFRESH_TOKEN_EXPIRE_DAYS
 
 from database.entities import User as UserDB
 
-def get_payload(user: UserDB) -> dict:
+def add_payload(user: UserDB) -> dict:
     return {
+        "user_id": user.id,
+        "user_uuid": str(user.uuid),
         "email": user.email,
         "firstname": user.firstname
     }
+
+def get_payload(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Токен истёк")
+    except jwt.DecodeError:
+        raise HTTPException(status_code=401, detail="Неверный токен")
 
 def create_tokens(payload: dict):
     return {
