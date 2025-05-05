@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 
+
 class EmailReminder(BaseModel):
     email: EmailStr
     sub_title: str
@@ -9,9 +10,9 @@ class EmailReminder(BaseModel):
         return {
             "email": self.email,
             "sub_title": self.sub_title,
-            "frequency_id": self.frequency_id
+            "frequency_id": self.frequency_id,
         }
-    
+
     @property
     def theme(self) -> str:
         return f"Subscription Reminder - {self.sub_title}"
@@ -24,4 +25,8 @@ class EmailReminder(BaseModel):
         return hash((self.email, self.sub_title))
 
     def __eq__(self, other):
-        return isinstance(other, EmailReminder) and self.email == other.email and self.sub_title == other.sub_title
+        return (
+            isinstance(other, EmailReminder)
+            and self.email == other.email
+            and self.sub_title == other.sub_title
+        )

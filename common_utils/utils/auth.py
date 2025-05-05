@@ -12,6 +12,7 @@ def hash_password(password: str) -> str:
 def check_password(password: str, hashed_pass: str) -> bool:
     return bcrypt.checkpw(password.encode("utf-8"), hashed_pass.encode("utf-8"))
 
+
 def get_current_user(request: Request) -> dict:
     token = request.cookies.get("access_token")
     if not token:

@@ -6,13 +6,14 @@ from common_utils.redis import EmailReminder
 
 app = FastAPI()
 
+
 @app.post("/send_notification")
 async def send_email(email: EmailReminder):
     sender = "odosaol@ya.ru"
     password = "unmzdaposipjydow"
 
     # Используем свойство text
-    msg = MIMEText(email.message, 'plain', 'utf-8')
+    msg = MIMEText(email.message, "plain", "utf-8")
     msg["From"] = sender
     msg["Subject"] = email.theme
 
@@ -30,4 +31,3 @@ async def send_email(email: EmailReminder):
         return f"Ошибка: {_ex}"
     finally:
         await server.quit()
-

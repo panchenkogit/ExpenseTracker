@@ -3,8 +3,9 @@ import uuid
 from sqlalchemy.orm import relationship
 from database.connect import Base
 
+
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     uuid = Column(UUID, default=uuid.uuid4, unique=True, nullable=False)
@@ -18,4 +19,6 @@ class User(Base):
     subscriptions = relationship("Sub", back_populates="user")
 
     created = Column(TIMESTAMP, nullable=False, server_default=func.now())
-    updated = Column(TIMESTAMP, nullable=False, server_default=func.now(), onupdate=func.now())
+    updated = Column(
+        TIMESTAMP, nullable=False, server_default=func.now(), onupdate=func.now()
+    )

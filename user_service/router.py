@@ -11,20 +11,22 @@ from common_utils.utils.cookies import set_tokens_in_cookie
 from common_utils.utils.jwt import add_payload, create_tokens, get_payload
 
 
-router = APIRouter(prefix="/user",
-                   tags=["User Reg login"])
+router = APIRouter(prefix="/user", tags=["User Reg login"])
 
 
 async def check_email(email: str, session: AsyncSession) -> bool:
     query = await session.execute(select(exists().where(UserDB.email == email)))
     return query.scalar_one()
 
+
 @router.post("/register")
-async def register(user: RegUser,
-                   response: Response,
-                   session: AsyncSession = Depends(get_session)):
+async def register(
+    user: RegUser, response: Response, session: AsyncSession = Depends(get_session)
+):
     if await check_email(user.email, session):
-        raise HTTPException(status_code=400, detail="Пользователь с таким email уже существует.")
+        raise HTTPException(
+            status_code=400, detail="Пользователь с таким email уже существует."
+        )
 
     password_hash = hash_password(user.password)
 
@@ -36,37 +38,35 @@ async def register(user: RegUser,
     session.add(new_user)
 
     payload = add_payload(new_user)
-    tokens  = create_tokens(payload)
+    tokens = create_tokens(payload)
     set_tokens_in_cookie(response, tokens)
-    
+
     return {"detail": "Вы успешно зарегистрировались!"}
 
 
 @router.post("/login")
-async def login(user: LoginUser,
-                response: Response,
-                session: AsyncSession = Depends(get_session)):
+async def login(
+    user: LoginUser, response: Response, session: AsyncSession = Depends(get_session)
+):
     if not await check_email(user.email, session):
-        raise HTTPException(status_code=404,
-                            detail="Пользователя с таким email не существует!")
-    
+        raise HTTPException(
+            status_code=404, detail="Пользователя с таким email не существует!"
+        )
+
     query = await session.execute(select(UserDB).where(UserDB.email == user.email))
     result = query.scalar_one_or_none()
     if not check_password(user.password, result.password_hash):
-        raise HTTPException(status_code=401,
-                            detail="Неправильный логин или пароль")
-    
+        raise HTTPException(status_code=401, detail="Неправильный логин или пароль")
+
     payload = add_payload(result)
 
-    tokens  = create_tokens(payload)
+    tokens = create_tokens(payload)
     set_tokens_in_cookie(response, tokens)
 
     return {"detail": "Вы успешно вошли."}
+
 
 @router.post("/logout")
 async def logout(response: Response):
     response.delete_cookie("access_token")
     response.delete_cookie("refresh_token")
-
-
-    

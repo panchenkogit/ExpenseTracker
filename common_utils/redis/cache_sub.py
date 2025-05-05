@@ -15,12 +15,12 @@ from logs import logger
 scheduler = AsyncIOScheduler()
 
 
-async def add_reminder(email: str, sub_title: str, reminder_date: str, frequency_id: int):
+async def add_reminder(
+    email: str, sub_title: str, reminder_date: str, frequency_id: int
+):
     reminder_data = EmailReminder(
-                email=email,
-                sub_title=sub_title,
-                frequency_id=frequency_id
-            )
+        email=email, sub_title=sub_title, frequency_id=frequency_id
+    )
 
     reminder_data_json = json.dumps(reminder_data.to_dict(), ensure_ascii=False)
 
@@ -29,14 +29,11 @@ async def add_reminder(email: str, sub_title: str, reminder_date: str, frequency
 
 async def remove_reminder(email: str, sub_title: str, frequency_id: int):
     reminder_data = EmailReminder(
-                email=email,
-                sub_title=sub_title,
-                frequency_id=frequency_id
-            )
+        email=email, sub_title=sub_title, frequency_id=frequency_id
+    )
     reminder_data_json = json.dumps(reminder_data.to_dict(), ensure_ascii=False)
 
     await redis_client.zrem("reminders", reminder_data_json)
-
 
 
 async def check_reminders():
@@ -49,7 +46,7 @@ async def check_reminders():
     if not reminders:
         logger.info("No reminders to send.")
         return
-    
+
     for reminder in reminders:
         logger.info(f"Sending reminder: {reminder}")
         data = json.loads(reminder)
@@ -59,10 +56,8 @@ async def check_reminders():
         frequency_id = data["frequency_id"]
 
         reminder = EmailReminder(
-                email=email,
-                sub_title=sub_title,
-                frequency_id=frequency_id
-            )
+            email=email, sub_title=sub_title, frequency_id=frequency_id
+        )
 
         await send_email(reminder)
 
@@ -84,6 +79,5 @@ async def refresh_reminders(email: str, sub_title: str, frequency_id: int):
     await add_reminder(email, sub_title, timestamp, frequency_id)
 
 
-
-scheduler.add_job(check_reminders, 'interval', seconds=10)
+scheduler.add_job(check_reminders, "interval", seconds=10)
 scheduler.start()
